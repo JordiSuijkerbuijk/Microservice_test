@@ -14,14 +14,14 @@ RUN apk add --no-cache nodejs npm
 # Require _defaults app
 #
 
-# Create _defaults directory
-WORKDIR /_defaults
+# # Create _defaults directory
+# WORKDIR /_defaults
 
-# Bundle _defaults source
-COPY ./_defaults .
+# # Bundle _defaults source
+# COPY ./_defaults .
 
 # Install dependencies
-RUN npm ci --only=production
+# RUN npm ci --only=production
 
 #
 # Require app
@@ -41,7 +41,7 @@ RUN npm ci --only=production
 #
 
 # Expose app
-EXPOSE 4001
+EXPOSE 4000
 
 # Set node env
 ENV NODE_ENV=production

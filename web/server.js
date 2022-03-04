@@ -1,96 +1,39 @@
-/**
- * Import base packages
- */
- const express = require('express');
- const app = express();
- 
- /**
-  * Check if we are using the dev version
-  */
- const dev = process.env.NODE_ENV !== 'production';
- 
- /**
-  * Import own packages
-  * Assets will be introduced later
-  */
-//  const assets = require('./assets');
- 
- /**
-  * Define SPA renderer
-  * Single Page Application renderer
-  */
- const spa = (req, res) => {
-    //  const files = assets();
- 
-     res.render('index', {
-         protocol: req.get('host'),
-         hostname: req.protocol,
-         baseUrl: `${req.protocol}://${req.get('host')}/`,
-         contentApi: dev ? 'http://localhost:4001' : '/api/content',
-        //  assets: {
-        //      js: files["main.js"],
-        //      css: files["main.css"]
-        //  }
-     });
- };
+import express from "express";
+import compression from "compression";
+import morgan from "morgan";
+import { createRequestHandler } from "@remix-run/express";
 
- 
- /**
-  * Set template engine
-  * Currently not interested in SEO
-  */
-//  app.set('view engine', 'ejs');
-//  app.set('views', `${__dirname}/template`);
+import * as serverBuild from "@remix-run/dev/server-build";
 
- 
- /**
-  * Request logger
-  */
- app.use((req, res, next) => {
-     log.trace(`[Web][REQUEST]: ${req.originalUrl}`);
-     next();
- });
- 
- /**
-  * Serve static public dir
-  * TODO: Ask Glenn what this does
-  */
- app.use(express.static(`${__dirname}/public`));
- 
- /**
-  * Serve assets on dev
-  * TODO: Ask Glenn what this does
-  */
- if(dev) {
-     app.use('/assets', express.static(`${__dirname}/../assets/src`));
- }
- 
- 
- /**
-  * Configure routers
-  * Currently not interested in this part
-  */
-//  app.get('/sitemap.xml', (req, res) => {
-//      res.status(404);
-//      res.send('Not Found!')
-//  });
-//  app.get('/robots.txt', (req, res) => {
-//      res.status(404);
-//      res.send('Not Found!')
-//  });
-//  app.get('*', (req, res) => spa(req, res));
- 
- /**
-  * Setup default 404 message
-  */
- app.use((req, res) => {
-     res.status(404);
-     res.send('Not Found!')
- });
- 
- /**
-  * Start listening on port
-  */
- app.listen(3000, '0.0.0.0', () => {
-     log.info(`[Web] App is running on: 0.0.0.0:3000`);
- });
+const app = express();
+
+app.use(compression());
+
+// http://expressjs.com/en/advanced/best-practice-security.html#at-a-minimum-disable-x-powered-by-header
+app.disable("x-powered-by");
+
+// Remix fingerprints its assets so we can cache forever.
+app.use(
+  "/build",
+  express.static("public/build", { immutable: true, maxAge: "1y" })
+);
+
+// Everything else (like favicon.ico) is cached for an hour. You may want to be
+// more aggressive with this caching.
+app.use(express.static("public/build", { maxAge: "1h" }));
+
+app.use(morgan("tiny"));
+
+app.all(
+  "*",
+  createRequestHandler({
+    build: serverBuild,
+    mode: process.env.NODE_ENV,
+  })
+);
+
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+  console.log(`Express server listening on port ${port}`);
+});

@@ -1,15 +1,33 @@
 const fetch = require('node-fetch');
-const https = require('https')
+const express = require('express');
 
-const dev = process.env.NODE_ENV !== 'production';
+// const dev = process.env.NODE_ENV !== 'production';
 
-https.get('/:slug', (req, res) => {
-  const slug = req.params.slug || false
+const http = require("http");
 
-  if (!false) {
-    fetch()
-  }
+const hostname = "localhost";
+const port = 4000;
 
-  // return empty result
+
+const app = express();
+
+app.get('/', (req, res) => {
+  const slug = req.params.slug || false;
+
+  fetch('localhost:1337/api/movies', {
+      method: 'get',
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  }).then(res => res.json()).then(data => console.log(data))
+
+  console.log('slug', slug);
 })
+
+// Prints a log once the server starts listening
+app.listen(port, hostname, function() {
+   console.log(`Server running at http://${hostname}:${port}/`);
+})
+
+
 

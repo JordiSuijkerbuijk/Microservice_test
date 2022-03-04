@@ -1,0 +1,91 @@
+version: '2'
+services:
+  # API Services
+  content:
+    build:
+      context: .
+      dockerfile: ./api/content/DockerFile
+    networks:
+      - web
+      - backend
+    # labels:
+    #   #### Labels define the behavior and rules of the traefik proxy for this container ####
+    #   - 'traefik.enable=true'
+    #   - 'traefik.http.routers.microservice-content.rule=PathPrefix(`/api/content`)'
+    #   - 'traefik.http.routers.microservice-content.entrypoints=web'
+    #   - 'traefik.http.routers.microservice-content.middlewares=microservice-content-stripprefix,microservice-content-ratelimit'
+    #   - 'traefik.http.middlewares.microservice-content-stripprefix.stripprefix.prefixes=/api/content'
+    #   - 'traefik.http.middlewares.microservice-content-ratelimit.ratelimit.average=100'
+    #   - 'traefik.http.middlewares.microservice-content-ratelimit.ratelimit.burst=50'
+    #   - 'traefik.http.services.microservice-content.loadbalancer.healthcheck.path=/_status'
+    #   - 'traefik.http.services.microservice-content.loadbalancer.healthcheck.interval=30s'
+  cms:
+    build:
+      context: .
+      dockerfile: ./cms/DockerFile
+    networks:
+      - backend
+    # labels:
+    #   #### Labels define the behavior and rules of the traefik proxy for this container ####
+    #   - 'traefik.enable=true'
+    #   - 'traefik.http.routers.microservice-content.rule=PathPrefix(`/cms`)'
+    #   - 'traefik.http.routers.microservice-content.entrypoints=web'
+    #   - 'traefik.http.routers.microservice-cms.middlewares=microservice-cms-redirectregex,microservice-cms-compress'
+    #   - 'traefik.http.middlewares.microservice-cms-redirectregex.redirectregex.regex=^https?://.*/cms/?$$'
+    #   - 'traefik.http.middlewares.microservice-cms-redirectregex.redirectregex.replacement=/cms/'
+    #   - 'traefik.http.middlewares.microservice-cms-redirectregex.redirectregex.permanent=true'
+    #   - 'traefik.http.middlewares.microservice-cms-compress.compress=true'
+    # App Web UI
+  web:
+    build:
+      context: .
+      dockerfile: ./web/DockerFile
+    networks:
+      - web
+    # labels:
+    #   #### Labels define the behavior and rules of the traefik proxy for this container ####
+    #   - 'traefik.enable=true'
+    #   - 'traefik.http.routers.microservice-web.rule=PathPrefix(`/`)'
+    #   - 'traefik.http.routers.microservice-web.entrypoints=web'
+    #   - 'traefik.http.routers.microservice-web.middlewares=microservice-web-compress'
+    #   - 'traefik.http.middlewares.microservice-web-compress.compress=true'
+    #   - 'traefik.http.services.microservice-web.loadbalancer.healthcheck.path=/'
+    #   - 'traefik.http.services.microservice-web.loadbalancer.healthcheck.interval=30s'
+  # traefik:
+  #   image: traefik:v2.5
+  #   ports:
+  #     - '80:80' # <== http
+  #     - '8080:8080' # <== dashboard
+  #   command:
+  #     ###
+  #     ### https://doc.traefik.io/traefik/reference/static-configuration/cli/
+  #     ###
+  #     ## API Settings - https://docs.traefik.io/operations/api/, endpoints - https://docs.traefik.io/operations/api/#endpoints ##
+  #     - --api.insecure=true
+  #     - --api.dashboard=true
+  #     - --api.debug=true
+  #     ## Log Settings (options: ERROR, DEBUG, PANIC, FATAL, WARN, INFO) - https://docs.traefik.io/observability/logs/ ##
+  #     - --log.level=INFO
+  #     ## Provider Settings - https://docs.traefik.io/providers/docker/#provider-configuration ##
+  #     - --providers.docker=true
+  #     - --providers.docker.exposedbydefault=false
+  #     - --providers.docker.network=web
+  #     ## Entrypoints Settings - https://docs.traefik.io/routing/entrypoints/#configuration ##
+  #     - --entrypoints.web.address=:80
+  #     ## Traefik Pilot
+  #     - --pilot.dashboard=false
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   networks:
+  #     - web
+  #   labels:
+  #     #### Labels define the behavior and rules of the traefik proxy for this container ####
+  #     - 'traefik.enable=true'
+  #     - 'traefik.http.routers.api.service=api@internal'
+networks:
+  web:
+    external: true
+  backend:
+    external: false
+  db:
+    external: false

@@ -31,20 +31,20 @@ RUN apk add --no-cache nodejs npm
 WORKDIR /app
 
 # Bundle app source
-COPY ./web .
+COPY ./cms .
 
 # Install dependencies
-RUN npm ci
+RUN npm ci --only=production
 
 #
 # Setup app
 #
 
 # Expose app
-EXPOSE 3000
+EXPOSE 5000
 
 # Set node env
 ENV NODE_ENV=production
 
 # Run app
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
