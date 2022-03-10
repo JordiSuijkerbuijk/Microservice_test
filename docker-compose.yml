@@ -7,7 +7,8 @@ services:
       dockerfile: ./api/content/DockerFile
     networks:
       - web
-      - backend
+    ports:
+      - '4000:4000'
     # labels:
     #   #### Labels define the behavior and rules of the traefik proxy for this container ####
     #   - 'traefik.enable=true'
@@ -24,7 +25,9 @@ services:
       context: .
       dockerfile: ./cms/DockerFile
     networks:
-      - backend
+      - web
+    ports:
+      - '1337:1337'
     # labels:
     #   #### Labels define the behavior and rules of the traefik proxy for this container ####
     #   - 'traefik.enable=true'
@@ -42,6 +45,8 @@ services:
       dockerfile: ./web/DockerFile
     networks:
       - web
+    ports:
+      - '3000:3000'
     # labels:
     #   #### Labels define the behavior and rules of the traefik proxy for this container ####
     #   - 'traefik.enable=true'

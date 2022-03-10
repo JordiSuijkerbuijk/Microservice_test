@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "yeets",
+  "info": {
+    "singularName": "yeet",
+    "pluralName": "yeets",
+    "displayName": "yeet"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "text": {
+      "type": "text"
+    }
+  }
+}

@@ -34,17 +34,17 @@ WORKDIR /app
 COPY ./cms .
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci
 
 #
 # Setup app
 #
 
 # Expose app
-EXPOSE 5000
+EXPOSE 1337
 
 # Set node env
 ENV NODE_ENV=production
 
 # Run app
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "develop"]

@@ -34,7 +34,7 @@ WORKDIR /app
 COPY ./api/content .
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci
 
 #
 # Setup app
@@ -47,4 +47,4 @@ EXPOSE 4000
 ENV NODE_ENV=production
 
 # Run app
-CMD ["node", "/app/server.js"]
+CMD ["npm", "run", "start"]
